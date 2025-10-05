@@ -1,9 +1,12 @@
 package com.rest.webservices.restful_web_services.user;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import com.fasterxml.jackson.databind.annotation.JsonValueInstantiator;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -19,6 +22,31 @@ public class UserResource {
 
     @GetMapping("/users/{id}")
     public User findOne(@PathVariable int id){
+        User user = userDaoService.findOne(id);
+        if(user == null){
+            throw new UserNotFoundException("id: "+id);
+        }
         return userDaoService.findOne(id);
+    }
+
+    @PostMapping("/users")
+    public ResponseEntity<User> createUser(  @Valid @RequestBody User user){
+        User savedUser = userDaoService.save(user);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(savedUser.getId())
+                .toUri();
+        return ResponseEntity.created(location).build();
+    }
+
+    @DeleteMapping("/users/{id}")
+    public boolean deleteUserById(@PathVariable int id){
+        boolean res = userDaoService.deleteById(id);
+        return res;
+    }
+
+    @PatchMapping("/users/{id}/{name}")
+    public User UpdateById(@PathVariable int id,@PathVariable String name){
+        return userDaoService.UpdateById(id,name);
     }
 }
