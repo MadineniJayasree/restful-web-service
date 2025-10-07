@@ -28,18 +28,6 @@ pipeline {
                 sh 'mvn clean package -DskipTests'
             }
         }
-        stage('Run Docker Container') {
-            steps {
-                script {
-                    sh '''
-                    docker stop springboot-container || true
-                    docker rm springboot-container || true
-                    docker run -d -p 8080:9090 --name springboot-container springboot-docker-app
-                    '''
-                }
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 echo "Building Docker image..."
