@@ -9,7 +9,8 @@ pipeline {
     environment {
         IMAGE_NAME = "springboot-docker-app"
         CONTAINER_NAME = "springboot-container"
-        PORT = "8080"
+        APP_PORT = "8080"         // App internal port
+        HOST_PORT = "9090"
     }
 
     stages {
@@ -50,7 +51,7 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 echo "Running Docker container..."
-                sh "docker run -d -p ${PORT}:${PORT} --name ${CONTAINER_NAME} ${IMAGE_NAME}"
+                sh "docker run -d -p ${APP_PORT}:${HOST_PORT} --name ${CONTAINER_NAME} ${IMAGE_NAME}"
             }
         }
     }
